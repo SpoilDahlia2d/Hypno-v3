@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WORSHIP ME</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <!-- CRT SCANLINE OVERLAY -->
+    <div class="scanlines"></div>
+    <div class="vignette"></div>
+
+    <!-- START SCREEN -->
+    <div id="overlay">
+        <h1 class="glitch" data-text="ENTER THE SHRINE">ENTER THE SHRINE</h1>
+        <p class="subtext">HEADPHONES MANDATORY. FULLSCREEN ONLY.</p>
+        <button id="start-btn" onclick="startExperience()">I SUBMIT</button>
+    </div>
+
+    <!-- MAIN VIDEO BACKGROUND (Looping) -->
+    <video id="bg-video" loop muted playsinline class="hidden">
+        <!-- User's Video Placeholder -->
+        <source src="https://files.catbox.moe/w1gysi.mp4" type="video/mp4">
+    </video>
+
+    <!-- FLASHING IMAGE CONTAINER -->
+    <div id="flash-container"></div>
+
+    <!-- SUBLIMINAL TEXT LAYER -->
+    <div id="subliminal-text"></div>
+
+    <!-- AUDIO -->
+    <audio id="hypno-audio" loop>
+        <source src="https://files.catbox.moe/bl9gs1.mp3" type="audio/mpeg">
+    </audio>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
