@@ -1,17 +1,20 @@
 // CONFIGURATION
-// RENAME YOUR FILES IN THE 'assets' FOLDER TO:
-// 1.jpg, 2.jpg, 3.jpg ... up to 100.jpg
-// or .png, .gif, .mp4
-const MAX_FILES = 50;
+// AUTOMATICALLY LOADS: 10.jpg, 20.jpg ... up to 430.jpg (AND .JPG)
+const PHOTO_COUNT = 43;
+const STEP = 10;
 const ASSETS = [];
 
-// AUTO-DISCOVER ASSETS (1 to 50)
-const validExtensions = ['jpg', 'png', 'gif', 'jpeg', 'webp', 'mp4'];
+// GENERATE FILENAMES: 10.jpg, 20.jpg ... 430.jpg
+// Also tries .png, .jpeg AND UPPERCASE VARIANTS to match your files.
+const validExtensions = [
+    'jpg', 'png', 'jpeg', 'mp4',
+    'JPG', 'PNG', 'JPEG', 'MP4'
+];
 
-for (let i = 1; i <= MAX_FILES; i++) {
+for (let i = 1; i <= PHOTO_COUNT; i++) {
+    const num = i * STEP; // 10, 20, 30...
     validExtensions.forEach(ext => {
         // Try to add potential file paths
-        // The browser will try to load them; if they don't exist, they just won't show.
         ASSETS.push(`assets/${num}.${ext}`);
     });
 }
@@ -46,9 +49,13 @@ function startExperience() {
     }
 
     // START MEDIA
-    bgVideo.classList.remove('hidden');
-    bgVideo.play();
-    audio.play();
+    if (bgVideo) {
+        bgVideo.classList.remove('hidden');
+        bgVideo.play().catch(e => console.log("Video autoplay blocked:", e));
+    }
+    if (audio) {
+        audio.play().catch(e => console.log("Audio autoplay blocked:", e));
+    }
 
     // START LOOPS
     startFlashing();
@@ -59,7 +66,7 @@ function startExperience() {
     setTimeout(() => {
         intenseMode = true;
         document.body.classList.add('intense');
-        bgVideo.playbackRate = 1.5; // Speed up video
+        if (bgVideo) bgVideo.playbackRate = 1.5; // Speed up video
     }, 10000); // After 10 seconds, go crazy
 }
 
@@ -77,6 +84,8 @@ function startFlashing() {
 }
 
 function spawnImage() {
+    if (ASSETS.length === 0) return;
+
     const imgUrl = ASSETS[Math.floor(Math.random() * ASSETS.length)];
     const img = document.createElement('img');
     img.src = imgUrl;
@@ -118,7 +127,7 @@ function startSubliminal() {
 function startGlitchAudio() {
     // Randomly chop video playback for glitch effect
     setInterval(() => {
-        if (Math.random() > 0.8) {
+        if (Math.random() > 0.8 && bgVideo) {
             bgVideo.currentTime -= 0.1; // Stutter back
         }
     }, 500);
