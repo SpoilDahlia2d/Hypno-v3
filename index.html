@@ -6,7 +6,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ETERNAL WORSHIP</title>
     <link rel="stylesheet" href="style.css">
-    <!-- ELEGANT FONTS -->
     <link
         href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Montserrat:wght@300;600&display=swap"
         rel="stylesheet">
@@ -14,7 +13,7 @@
 
 <body>
 
-    <!-- VIDEO BACKGROUND -->
+    <!-- BACKGROUND VIDEO -->
     <video id="bg-video" loop muted playsinline class="hidden">
         <source src="assets/bg.mp4" type="video/mp4">
     </video>
@@ -29,24 +28,42 @@
             <button id="enter-btn" class="fade-in delay-2" onclick="initShrine()">ENTER THE TEMPLE</button>
         </div>
 
-        <!-- PAYWALL LOCK (Hidden initially) -->
+        <!-- PAYWALL LOCK (CODE GATE) -->
         <div id="paywall-overlay" class="hidden">
             <div class="glass-box">
                 <h2>ACCESS RESTRICTED</h2>
-                <p>YOU HAVE CONSUMED YOUR FREE SAMPLE.</p>
-                <p>TO GAIN ETERNAL ACCESS, YOU MUST PAY TRIBUTE.</p>
-                <a href="https://throne.com/dahlia_star" target="_blank" class="gold-btn" onclick="unlockShrine()">PAY
-                    TRIBUTE ON THRONE</a>
-                <p class="small">CLICK THE LINK TO PROVE DEVOTION, THEN RETURN.</p>
+                <p>FREE SAMPLE CONSUMED.</p>
+                <p>PAY TRIBUTE TO RECEIVE THE KEY.</p>
+
+                <a href="https://throne.com/dahlia_star" target="_blank" class="gold-btn">1. PAY TRIBUTE HERE</a>
+
+                <div class="input-group">
+                    <p class="small">2. ENTER THE CODE SENT TO YOU:</p>
+                    <input type="text" id="code-input" placeholder="ENTER CODE" autocomplete="off">
+                    <button id="unlock-btn" onclick="checkCode()">UNLOCK</button>
+                </div>
+                <p id="error-msg" class="hidden">INVALID CODE</p>
             </div>
         </div>
 
-        <!-- WORSHIP METER -->
+        <!-- REWARD MODAL (500 Clicks) -->
+        <div id="reward-overlay" class="hidden">
+            <div class="glass-box">
+                <h2>DEVOTION PROVEN</h2>
+                <p>YOU HAVE CLICKED 500 TIMES.</p>
+                <p>YOUR LOYALTY IS ACCEPTED.</p>
+                <a href="https://twitter.com/SpoilDahlia2D" target="_blank" class="gold-btn">CLAIM YOUR REWARD</a>
+                <button class="close-btn" onclick="closeReward()">CONTINUE WORSHIPPING</button>
+            </div>
+        </div>
+
+        <!-- WORSHIP HUD -->
         <div id="worship-hud" class="hidden">
             <div class="bar-container">
                 <div id="worship-bar"></div>
             </div>
             <p id="instruction-text">TAP SCREEN TO PRAY</p>
+            <p id="click-counter">CLICKS: 0 / 500</p>
         </div>
 
     </div>
