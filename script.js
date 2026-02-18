@@ -113,12 +113,30 @@ function initParticles() {
     }
 }
 
+// CODE GATE CONFIGURATION
+const SECRET_CODE = "OBEY"; // <--- CHANGE THIS CODE TO WHATEVER YOU WANT
+let totalClicks = 0;
+const CLICK_GOAL = 500;
+let rewardClaimed = false;
+
 // INTERACTION: CLICK TO WORSHIP
-document.addEventListener('click', () => {
+document.addEventListener('click', (e) => {
+    // Ignore clicks on buttons/inputs
+    if (e.target.tagName === 'BUTTON' || e.target.tagName === 'INPUT' || e.target.tagName === 'A') return;
+
     if (!isRunning || paywallActive) return;
 
     worshipLevel += 10;
     if (worshipLevel > 100) worshipLevel = 100;
+
+    // CLICK COUNTER LOGIC
+    totalClicks++;
+    document.getElementById('click-counter').innerText = `CLICKS: ${totalClicks} / ${CLICK_GOAL}`;
+
+    if (totalClicks >= CLICK_GOAL && !rewardClaimed) {
+        unlockReward();
+    }
+
     updateBar();
 
     // VISUAL FEEDBACK
@@ -127,6 +145,48 @@ document.addEventListener('click', () => {
         if (bgVideo) bgVideo.style.filter = "brightness(0.4) grayscale(100%)";
     }, 200);
 });
+
+function checkCode() {
+    const input = document.getElementById('code-input');
+    const error = document.getElementById('error-msg');
+
+    // Case insensitive check
+    if (input.value.toUpperCase().trim() === SECRET_CODE) {
+        // SUCCESS
+        paywallActive = false;
+        document.getElementById('paywall-overlay').classList.add('hidden');
+        document.getElementById('paywall-overlay').classList.remove('visible');
+
+        // Resume
+        if (bgVideo) bgVideo.play();
+        if (audio) audio.play();
+        startLogic();
+        loopImages();
+
+    } else {
+        // FAIL
+        error.classList.remove('hidden');
+        input.style.borderColor = "red";
+        setTimeout(() => {
+            error.classList.add('hidden');
+            input.style.borderColor = "#d4af37";
+        }, 2000);
+    }
+}
+
+function unlockReward() {
+    rewardClaimed = true;
+    const modal = document.getElementById('reward-overlay');
+    modal.classList.remove('hidden');
+
+    // PAUSE FOR MOMENT
+    if (bgVideo) bgVideo.pause();
+}
+
+function closeReward() {
+    document.getElementById('reward-overlay').classList.add('hidden');
+    if (bgVideo) bgVideo.play();
+}
 
 // LOGIC LOOP (DRAINS METER)
 function startLogic() {
@@ -212,21 +272,4 @@ function activatePaywall() {
     // STOP MEDIA
     if (bgVideo) bgVideo.pause();
     if (audio) audio.pause();
-}
-
-function unlockShrine() {
-    window.open("https://throne.com/dahlia_star", "_blank");
-
-    // UNLOCK AFTER DELAY
-    setTimeout(() => {
-        paywallActive = false;
-        const pw = document.getElementById('paywall-overlay');
-        pw.classList.remove('visible');
-        setTimeout(() => pw.classList.add('hidden'), 2000);
-
-        if (bgVideo) bgVideo.play();
-        if (audio) audio.play();
-        loopImages();
-
-    }, 5000);
 }
