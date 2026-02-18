@@ -1,134 +1,174 @@
 // CONFIGURATION
-// AUTOMATICALLY LOADS: 10.jpg, 20.jpg ... up to 430.jpg (AND .JPG)
 const PHOTO_COUNT = 43;
 const STEP = 10;
 const ASSETS = [];
 
-// GENERATE FILENAMES: 10.jpg, 20.jpg ... 430.jpg
-// Also tries .png, .jpeg AND UPPERCASE VARIANTS to match your files.
-const validExtensions = [
-    'jpg', 'png', 'jpeg', 'mp4',
-    'JPG', 'PNG', 'JPEG', 'MP4'
-];
-
+// GENERATE IMAGE LIST
+const validExtensions = ['jpg', 'png', 'jpeg', 'JPG', 'PNG', 'JPEG'];
 for (let i = 1; i <= PHOTO_COUNT; i++) {
-    const num = i * STEP; // 10, 20, 30...
+    const num = i * STEP;
     validExtensions.forEach(ext => {
-        // Try to add potential file paths
         ASSETS.push(`assets/${num}.${ext}`);
     });
 }
 
-// FALLBACK
-if (ASSETS.length === 0) {
-    ASSETS.push("https://files.catbox.moe/bb56sw.JPG");
-}
-
-const WORDS = ["LOOK", "OBEY", "MINE", "DATA", "EMPTY", "GOOD", "SUBMIT", "FOREVER", "NO CHOICE"];
-
+// SETUP
+let isRunning = false;
+let worshipLevel = 50; // Starts at 50%
+let paywallActive = false;
 const bgVideo = document.getElementById('bg-video');
 const audio = document.getElementById('hypno-audio');
 const flashContainer = document.getElementById('flash-container');
-const subText = document.getElementById('subliminal-text');
+const bar = document.getElementById('worship-bar');
 
-let isRunning = false;
-let intenseMode = false;
-
-function startExperience() {
+function initShrine() {
     // UI TRANSITION
-    const overlay = document.getElementById('overlay');
-    overlay.style.transition = "opacity 2s";
-    overlay.style.opacity = 0;
-    setTimeout(() => overlay.remove(), 2000);
+    const intro = document.getElementById('intro-overlay');
+    intro.style.opacity = 0;
+    setTimeout(() => {
+        intro.classList.add('hidden');
+        document.getElementById('worship-hud').classList.remove('hidden');
+    }, 2000);
 
     isRunning = true;
 
     // FULLSCREEN
     if (document.documentElement.requestFullscreen) {
-        document.documentElement.requestFullscreen();
+        document.documentElement.requestFullscreen().catch(e => console.log(e));
     }
 
-    // START MEDIA
+    // MEDIA
     if (bgVideo) {
         bgVideo.classList.remove('hidden');
-        bgVideo.play().catch(e => console.log("Video autoplay blocked:", e));
+        bgVideo.play();
     }
     if (audio) {
-        audio.play().catch(e => console.log("Audio autoplay blocked:", e));
+        audio.play();
+        audio.volume = 0.5;
     }
 
     // START LOOPS
-    startFlashing();
-    startSubliminal();
-    startGlitchAudio();
+    loopImages();
+    startLogic();
 
-    // ESCALATION
-    setTimeout(() => {
-        intenseMode = true;
-        document.body.classList.add('intense');
-        if (bgVideo) bgVideo.playbackRate = 1.5; // Speed up video
-    }, 10000); // After 10 seconds, go crazy
+    // ACTIVATE PAYWALL AFTER 45 SECONDS
+    setTimeout(activatePaywall, 45000);
 }
 
-function startFlashing() {
-    if (!isRunning) return;
+// INTERACTION: CLICK TO WORSHIP
+document.addEventListener('click', () => {
+    if (!isRunning || paywallActive) return;
 
-    // RANDOM INTERVAL (Rapid Fire)
-    // In intense mode, it's faster
-    const timeout = intenseMode ? Math.random() * 200 + 50 : Math.random() * 800 + 200;
+    worshipLevel += 10;
+    if (worshipLevel > 100) worshipLevel = 100;
+    updateBar();
+
+    // VISUAL FEEDBACK
+    if (bgVideo) bgVideo.style.filter = "brightness(0.8) grayscale(0%)";
+    setTimeout(() => {
+        if (bgVideo) bgVideo.style.filter = "brightness(0.4) grayscale(100%)";
+    }, 200);
+});
+
+// LOGIC LOOP (DRAINS METER)
+function startLogic() {
+    setInterval(() => {
+        if (!isRunning || paywallActive) return;
+
+        worshipLevel -= 1; // Decay
+        if (worshipLevel < 0) worshipLevel = 0;
+        updateBar();
+
+        if (worshipLevel < 20) {
+            document.getElementById('instruction-text').style.color = "red";
+            document.getElementById('instruction-text').innerText = "PRAY HARDER";
+        } else {
+            document.getElementById('instruction-text').style.color = "#fff";
+            document.getElementById('instruction-text').innerText = "TAP SCREEN TO PRAY";
+        }
+
+    }, 100);
+}
+
+function updateBar() {
+    bar.style.height = "100%";
+    bar.style.width = `${worshipLevel}%`;
+}
+
+// IMAGE LOOP (ELEGANT)
+function loopImages() {
+    if (!isRunning || paywallActive) return;
+
+    let timeout = Math.random() * 2000 + 1000;
+
+    // If worship is high, show more images (reward)
+    if (worshipLevel > 80) timeout = 800;
 
     setTimeout(() => {
         spawnImage();
-        startFlashing();
+        loopImages();
     }, timeout);
 }
 
 function spawnImage() {
     if (ASSETS.length === 0) return;
-
     const imgUrl = ASSETS[Math.floor(Math.random() * ASSETS.length)];
     const img = document.createElement('img');
     img.src = imgUrl;
-    img.className = 'flash-img flashing';
+    img.classList.add('flash-img');
 
-    // ERROR HANDLING: If 10.png doesn't exist but 10.jpg does, 
-    // the png error will trigger this and remove it from the list silently.
-    img.onerror = () => {
-        img.remove();
-        const index = ASSETS.indexOf(imgUrl);
-        if (index > -1) {
-            ASSETS.splice(index, 1);
-        }
-    };
-
-    // RANDOM POSITION OFFSET
-    const xOff = (Math.random() - 0.5) * 50;
-    const yOff = (Math.random() - 0.5) * 50;
-    img.style.left = `calc(50% + ${xOff}px)`; // Centered but jittery
-    img.style.top = `calc(50% + ${yOff}px)`;
-    img.style.transform = `translate(-50%, -50%) rotate(${Math.random() * 20 - 10}deg)`;
+    // CENTERED ELEGANCE
+    img.style.left = '50%';
+    img.style.top = '50%';
+    img.style.transform = `translate(-50%, -50%) scale(0.8)`;
+    img.style.opacity = 0;
 
     flashContainer.appendChild(img);
 
-    // CLEANUP
+    // ANIMATE IN
+    requestAnimationFrame(() => {
+        img.style.opacity = 1;
+        img.style.transform = `translate(-50%, -50%) scale(1) rotate(${Math.random() * 4 - 2}deg)`;
+    });
+
+    img.onerror = () => img.remove();
+
+    // REMOVE
     setTimeout(() => {
-        img.remove();
-    }, 500); // Remove after animation
+        img.style.opacity = 0;
+        img.style.transform = `translate(-50%, -50%) scale(1.1)`;
+        setTimeout(() => img.remove(), 1000);
+    }, 4000);
 }
 
-function startSubliminal() {
-    setInterval(() => {
-        subText.innerText = WORDS[Math.floor(Math.random() * WORDS.length)];
-        subText.style.opacity = Math.random() * 0.5;
-        setTimeout(() => subText.style.opacity = 0, 100);
-    }, 2000);
+// PAYWALL LOGIC
+function activatePaywall() {
+    paywallActive = true;
+    const pw = document.getElementById('paywall-overlay');
+    pw.classList.remove('hidden');
+    requestAnimationFrame(() => pw.classList.add('visible'));
+
+    // STOP MEDIA
+    if (bgVideo) bgVideo.pause();
+    if (audio) audio.pause();
 }
 
-function startGlitchAudio() {
-    // Randomly chop video playback for glitch effect
-    setInterval(() => {
-        if (Math.random() > 0.8 && bgVideo) {
-            bgVideo.currentTime -= 0.1; // Stutter back
-        }
-    }, 500);
+function unlockShrine() {
+    // REALISTICALLY, we can't detect if they paid on throne via static site easily.
+    // So we just unlock it when they click the link, assuming they did it.
+    // Or we keep it locked. But usually 'click to unlock' is the best UX for this fake wall.
+
+    window.open("https://throne.com/dahlia_star", "_blank");
+
+    // UNLOCK AFTER DELAY (Simulating verification)
+    setTimeout(() => {
+        paywallActive = false;
+        document.getElementById('paywall-overlay').classList.remove('visible');
+        setTimeout(() => document.getElementById('paywall-overlay').classList.add('hidden'), 2000);
+
+        if (bgVideo) bgVideo.play();
+        if (audio) audio.play();
+        loopImages();
+        startLogic();
+    }, 5000);
 }
