@@ -21,13 +21,59 @@ const audio = document.getElementById('hypno-audio');
 const flashContainer = document.getElementById('flash-container');
 const bar = document.getElementById('worship-bar');
 
+// PRELOADER
+const loadedImages = [];
+let loadedCount = 0;
+
+function preloadAssets() {
+    console.log("Starting preload of " + ASSETS.length + " potential images...");
+    ASSETS.forEach(src => {
+        const img = new Image();
+        img.src = src;
+        img.onload = () => {
+            loadedImages.push(src);
+            loadedCount++;
+            updateLoadingStatus();
+        };
+        img.onerror = () => {
+            // File doesn't exist, just skip
+            loadedCount++;
+            updateLoadingStatus();
+        }
+    });
+}
+
+function updateLoadingStatus() {
+    const btn = document.getElementById('enter-btn');
+    if (!btn) return;
+
+    const pct = Math.floor((loadedCount / ASSETS.length) * 100);
+
+    if (pct < 100) {
+        btn.innerText = `LOADING... ${pct}%`;
+        btn.disabled = true;
+        btn.style.opacity = 0.5;
+    } else {
+        btn.innerText = "ENTER THE TEMPLE";
+        btn.disabled = false;
+        btn.style.opacity = 1;
+    }
+}
+
+// Start preloading immediately
+preloadAssets();
+
 function initShrine() {
     // UI TRANSITION
     const intro = document.getElementById('intro-overlay');
+    intro.style.transition = "opacity 2s";
     intro.style.opacity = 0;
+
     setTimeout(() => {
         intro.classList.add('hidden');
         document.getElementById('worship-hud').classList.remove('hidden');
+        document.body.classList.add('vignette-pulse');
+        initParticles();
     }, 2000);
 
     isRunning = true;
@@ -40,10 +86,10 @@ function initShrine() {
     // MEDIA
     if (bgVideo) {
         bgVideo.classList.remove('hidden');
-        bgVideo.play();
+        bgVideo.play().catch(e => console.log("Video autostart failed", e));
     }
     if (audio) {
-        audio.play();
+        audio.play().catch(e => console.log("Audio autostart failed", e));
         audio.volume = 0.5;
     }
 
@@ -53,6 +99,18 @@ function initShrine() {
 
     // ACTIVATE PAYWALL AFTER 45 SECONDS
     setTimeout(activatePaywall, 45000);
+}
+
+// PARTICLES
+function initParticles() {
+    for (let i = 0; i < 50; i++) {
+        const p = document.createElement('div');
+        p.className = 'particle';
+        p.style.left = Math.random() * 100 + 'vw';
+        p.style.animationDuration = Math.random() * 5 + 5 + 's';
+        p.style.animationDelay = Math.random() * 5 + 's';
+        document.body.appendChild(p);
+    }
 }
 
 // INTERACTION: CLICK TO WORSHIP
@@ -91,11 +149,12 @@ function startLogic() {
 }
 
 function updateBar() {
+    if (!bar) return;
     bar.style.height = "100%";
     bar.style.width = `${worshipLevel}%`;
 }
 
-// IMAGE LOOP (ELEGANT)
+// IMAGE LOOP (PRELOADED ONLY)
 function loopImages() {
     if (!isRunning || paywallActive) return;
 
@@ -111,8 +170,10 @@ function loopImages() {
 }
 
 function spawnImage() {
-    if (ASSETS.length === 0) return;
-    const imgUrl = ASSETS[Math.floor(Math.random() * ASSETS.length)];
+    // USE ONLY LOADED IMAGES
+    if (loadedImages.length === 0) return;
+
+    const imgUrl = loadedImages[Math.floor(Math.random() * loadedImages.length)];
     const img = document.createElement('img');
     img.src = imgUrl;
     img.classList.add('flash-img');
@@ -131,8 +192,6 @@ function spawnImage() {
         img.style.transform = `translate(-50%, -50%) scale(1) rotate(${Math.random() * 4 - 2}deg)`;
     });
 
-    img.onerror = () => img.remove();
-
     // REMOVE
     setTimeout(() => {
         img.style.opacity = 0;
@@ -146,7 +205,9 @@ function activatePaywall() {
     paywallActive = true;
     const pw = document.getElementById('paywall-overlay');
     pw.classList.remove('hidden');
-    requestAnimationFrame(() => pw.classList.add('visible'));
+    // Force reflow
+    void pw.offsetWidth;
+    pw.classList.add('visible');
 
     // STOP MEDIA
     if (bgVideo) bgVideo.pause();
@@ -154,21 +215,18 @@ function activatePaywall() {
 }
 
 function unlockShrine() {
-    // REALISTICALLY, we can't detect if they paid on throne via static site easily.
-    // So we just unlock it when they click the link, assuming they did it.
-    // Or we keep it locked. But usually 'click to unlock' is the best UX for this fake wall.
-
     window.open("https://throne.com/dahlia_star", "_blank");
 
-    // UNLOCK AFTER DELAY (Simulating verification)
+    // UNLOCK AFTER DELAY
     setTimeout(() => {
         paywallActive = false;
-        document.getElementById('paywall-overlay').classList.remove('visible');
-        setTimeout(() => document.getElementById('paywall-overlay').classList.add('hidden'), 2000);
+        const pw = document.getElementById('paywall-overlay');
+        pw.classList.remove('visible');
+        setTimeout(() => pw.classList.add('hidden'), 2000);
 
         if (bgVideo) bgVideo.play();
         if (audio) audio.play();
         loopImages();
-        startLogic();
+
     }, 5000);
 }
