@@ -1,38 +1,47 @@
-@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Oswald:wght@700&display=swap');
-
-body {
+/* RESET */
+* {
+    box-sizing: border-box;
     margin: 0;
-    overflow: hidden;
-    background: #000;
-    font-family: 'Oswald', sans-serif;
-    color: #fff;
-    cursor: none;
-    /* Hide cursor for immersion */
+    padding: 0;
 }
 
-/* VIDEO BG */
+body {
+    background: #000;
+    overflow: hidden;
+    color: #fff;
+    font-family: 'Montserrat', sans-serif;
+    user-select: none;
+    cursor: crosshair;
+}
+
+/* BACKGROUND VIDEO */
 #bg-video {
     position: fixed;
     top: 50%;
     left: 50%;
     min-width: 100%;
     min-height: 100%;
-    width: auto;
-    height: auto;
     transform: translate(-50%, -50%);
-    z-index: -1;
-    filter: contrast(1.2) brightness(0.6) grayscale(100%);
-    transition: filter 5s ease;
+    z-index: -2;
+    filter: brightness(0.4) grayscale(100%);
+    transition: filter 2s ease;
 }
 
-/* INTENSE MODE FILTER */
-.intense #bg-video {
-    filter: contrast(1.5) brightness(0.8) grayscale(0%) hue-rotate(90deg);
-}
-
-/* OVERLAY UI */
-#overlay {
+/* UI LAYER */
+#ui-layer {
     position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 100;
+    pointer-events: none;
+    /* Let clicks pass through generally */
+}
+
+/* INTRO SCREEN */
+#intro-overlay {
+    position: absolute;
     top: 0;
     left: 0;
     width: 100%;
@@ -42,152 +51,173 @@ body {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    z-index: 100;
-    cursor: default;
+    pointer-events: auto;
+    z-index: 200;
 }
 
-.glitch {
-    font-size: 5rem;
-    position: relative;
+h1 {
+    font-family: 'Cinzel', serif;
+    font-size: 3rem;
     letter-spacing: 10px;
-    animation: glitch-anim 2s infinite;
-}
-
-.glitch::before,
-.glitch::after {
-    content: attr(data-text);
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    background: #000;
-}
-
-.glitch::before {
-    left: 2px;
-    text-shadow: -1px 0 red;
-    clip: rect(24px, 550px, 90px, 0);
-    animation: glitch-anim-2 3s infinite linear alternate-reverse;
-}
-
-.glitch::after {
-    left: -2px;
-    text-shadow: -1px 0 blue;
-    clip: rect(85px, 550px, 140px, 0);
-    animation: glitch-anim-2 2s infinite linear alternate-reverse;
-}
-
-#start-btn {
-    margin-top: 50px;
-    padding: 20px 60px;
-    background: transparent;
-    border: 2px solid #fff;
+    margin-bottom: 20px;
     color: #fff;
-    font-size: 2rem;
+    text-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
+}
+
+p {
+    font-size: 0.9rem;
+    letter-spacing: 3px;
+    color: #aaa;
+}
+
+#enter-btn {
+    margin-top: 50px;
+    padding: 15px 50px;
+    background: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: #fff;
     font-family: 'Cinzel', serif;
     letter-spacing: 5px;
     cursor: pointer;
-    transition: all 0.3s;
+    transition: all 0.5s;
 }
 
-#start-btn:hover {
-    background: #fff;
-    color: #000;
-    box-shadow: 0 0 30px #fff;
+#enter-btn:hover {
+    border-color: #fff;
+    box-shadow: 0 0 30px rgba(255, 255, 255, 0.3);
+    background: rgba(255, 255, 255, 0.05);
 }
 
-/* FLASH CONTAINER */
-#flash-container {
-    position: absolute;
+/* PAYWALL OVERLAY */
+#paywall-overlay {
+    position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    pointer-events: none;
-    z-index: 10;
+    background: rgba(0, 0, 0, 0.9);
+    backdrop-filter: blur(10px);
     display: flex;
     align-items: center;
     justify-content: center;
-}
-
-.flash-img {
-    max-width: 90%;
-    max-height: 90%;
-    position: absolute;
+    pointer-events: auto;
+    z-index: 300;
     opacity: 0;
-    transform: scale(1.2);
-    filter: drop-shadow(0 0 20px rgba(255, 0, 0, 0.5));
+    transition: opacity 2s ease;
 }
 
-/* CRT EFFECTS */
-.scanlines {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
-    background-size: 100% 2px, 3px 100%;
-    z-index: 50;
-    pointer-events: none;
+#paywall-overlay.visible {
+    opacity: 1;
+}
+
+.glass-box {
+    background: rgba(20, 20, 20, 0.6);
+    border: 1px solid rgba(212, 175, 55, 0.3);
+    /* Gold border */
+    padding: 50px;
+    text-align: center;
+    max-width: 500px;
+    width: 90%;
+    box-shadow: 0 0 50px rgba(0, 0, 0, 1);
+}
+
+.glass-box h2 {
+    font-family: 'Cinzel', serif;
+    color: #d4af37;
+    /* Gold */
+    margin-bottom: 20px;
+    letter-spacing: 5px;
+}
+
+.gold-btn {
+    display: inline-block;
+    margin-top: 30px;
+    padding: 20px 40px;
+    background: linear-gradient(45deg, #d4af37, #fffee0, #d4af37);
+    background-size: 200% 200%;
+    color: #000;
+    text-decoration: none;
+    font-weight: bold;
+    letter-spacing: 2px;
+    animation: gold-shine 3s infinite;
+    font-family: 'Cinzel', serif;
 }
 
 /* ANIMATIONS */
-@keyframes glitch-anim {
+@keyframes gold-shine {
     0% {
-        transform: skew(0deg);
+        background-position: 0% 50%;
     }
 
-    20% {
-        transform: skew(-2deg);
-    }
-
-    40% {
-        transform: skew(2deg);
+    50% {
+        background-position: 100% 50%;
     }
 
     100% {
-        transform: skew(0deg);
+        background-position: 0% 50%;
     }
 }
 
-@keyframes flash-in-out {
-    0% {
-        opacity: 0;
-        transform: scale(0.8) rotate(-5deg);
-        filter: blur(10px);
-    }
+.hidden {
+    display: none !important;
+}
 
-    10% {
+.fade-in {
+    opacity: 0;
+    animation: fade-in 2s forwards;
+}
+
+.delay-1 {
+    animation-delay: 1s;
+}
+
+.delay-2 {
+    animation-delay: 2s;
+}
+
+@keyframes fade-in {
+    to {
         opacity: 1;
-        filter: blur(0px) contrast(1.5);
-    }
-
-    30% {
-        transform: scale(1.5) rotate(5deg);
-    }
-
-    100% {
-        opacity: 0;
-        transform: scale(2) rotate(0deg);
     }
 }
 
-.flashing {
-    animation: flash-in-out 0.2s linear forwards;
-    /* SUPER FAST */
-}
-
-#subliminal-text {
+/* WORSHIP HUD */
+#worship-hud {
     position: fixed;
-    top: 50%;
+    bottom: 50px;
     left: 50%;
-    transform: translate(-50%, -50%);
-    font-size: 10rem;
-    font-weight: bold;
-    color: rgba(255, 255, 255, 0.1);
-    z-index: 5;
-    pointer-events: none;
-    mix-blend-mode: overlay;
-    text-transform: uppercase;
+    transform: translateX(-50%);
+    width: 300px;
+    text-align: center;
+}
+
+.bar-container {
+    width: 100%;
+    height: 4px;
+    background: rgba(255, 255, 255, 0.1);
+    margin-bottom: 10px;
+}
+
+#worship-bar {
+    width: 0%;
+    height: 100%;
+    background: #d4af37;
+    box-shadow: 0 0 10px #d4af37;
+    transition: width 0.2s;
+}
+
+#instruction-text {
+    font-size: 0.7rem;
+    opacity: 0.5;
+    letter-spacing: 3px;
+}
+
+/* FLASH IMAGES - ELEGANT */
+.flash-img {
+    position: absolute;
+    max-width: 60%;
+    max-height: 80%;
+    box-shadow: 0 0 40px rgba(0, 0, 0, 0.8);
+    opacity: 0;
+    transition: transform 6s ease-out, opacity 1s ease-in-out;
 }
