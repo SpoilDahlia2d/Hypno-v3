@@ -4,39 +4,60 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WORSHIP ME</title>
+    <title>ETERNAL WORSHIP</title>
     <link rel="stylesheet" href="style.css">
+    <!-- ELEGANT FONTS -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Montserrat:wght@300;600&display=swap"
+        rel="stylesheet">
 </head>
 
 <body>
 
-    <!-- CRT SCANLINE OVERLAY -->
-    <div class="scanlines"></div>
-    <div class="vignette"></div>
-
-    <!-- START SCREEN -->
-    <div id="overlay">
-        <h1 class="glitch" data-text="ENTER THE SHRINE">ENTER THE SHRINE</h1>
-        <p class="subtext">HEADPHONES MANDATORY. FULLSCREEN ONLY.</p>
-        <button id="start-btn" onclick="startExperience()">I SUBMIT</button>
-    </div>
-
-    <!-- MAIN VIDEO BACKGROUND (Looping) -->
+    <!-- VIDEO BACKGROUND -->
     <video id="bg-video" loop muted playsinline class="hidden">
-        <!-- User's Video Placeholder -->
-        <source src="https://files.catbox.moe/w1gysi.mp4" type="video/mp4">
+        <source src="assets/bg.mp4" type="video/mp4">
     </video>
 
-    <!-- FLASHING IMAGE CONTAINER -->
-    <div id="flash-container"></div>
+    <!-- UI LAYER -->
+    <div id="ui-layer">
 
-    <!-- SUBLIMINAL TEXT LAYER -->
-    <div id="subliminal-text"></div>
+        <!-- INTRO OVERLAY -->
+        <div id="intro-overlay">
+            <h1 class="fade-in">DIVINITY AWAITS</h1>
+            <p class="fade-in delay-1">HEADPHONES REQUIRED</p>
+            <button id="enter-btn" class="fade-in delay-2" onclick="initShrine()">ENTER THE TEMPLE</button>
+        </div>
+
+        <!-- PAYWALL LOCK (Hidden initially) -->
+        <div id="paywall-overlay" class="hidden">
+            <div class="glass-box">
+                <h2>ACCESS RESTRICTED</h2>
+                <p>YOU HAVE CONSUMED YOUR FREE SAMPLE.</p>
+                <p>TO GAIN ETERNAL ACCESS, YOU MUST PAY TRIBUTE.</p>
+                <a href="https://throne.com/dahlia_star" target="_blank" class="gold-btn" onclick="unlockShrine()">PAY
+                    TRIBUTE ON THRONE</a>
+                <p class="small">CLICK THE LINK TO PROVE DEVOTION, THEN RETURN.</p>
+            </div>
+        </div>
+
+        <!-- WORSHIP METER -->
+        <div id="worship-hud" class="hidden">
+            <div class="bar-container">
+                <div id="worship-bar"></div>
+            </div>
+            <p id="instruction-text">TAP SCREEN TO PRAY</p>
+        </div>
+
+    </div>
+
+    <!-- IMAGE CONTAINER -->
+    <div id="flash-container"></div>
 
     <!-- AUDIO -->
     <audio id="hypno-audio" loop>
-        <source src="https://files.catbox.moe/bl9gs1.mp3" type="audio/mpeg">
-        <source src="https://files.catbox.moe/bl9gs1.mp3" type="audio/mp3">
+        <source src="assets/audio.mp3" type="audio/mpeg">
+        <source src="assets/audio.mp3" type="audio/mp3">
     </audio>
 
     <script src="script.js"></script>
