@@ -62,12 +62,14 @@ h1 {
     margin-bottom: 20px;
     color: #fff;
     text-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
+    text-align: center;
 }
 
 p {
     font-size: 0.9rem;
     letter-spacing: 3px;
     color: #aaa;
+    text-align: center;
 }
 
 #enter-btn {
@@ -80,9 +82,16 @@ p {
     letter-spacing: 5px;
     cursor: pointer;
     transition: all 0.5s;
+    text-transform: uppercase;
 }
 
-#enter-btn:hover {
+#enter-btn:disabled {
+    cursor: wait;
+    border-color: #333;
+    color: #555;
+}
+
+#enter-btn:hover:not(:disabled) {
     border-color: #fff;
     box-shadow: 0 0 30px rgba(255, 255, 255, 0.3);
     background: rgba(255, 255, 255, 0.05);
@@ -141,6 +150,7 @@ p {
     letter-spacing: 2px;
     animation: gold-shine 3s infinite;
     font-family: 'Cinzel', serif;
+    text-transform: uppercase;
 }
 
 /* ANIMATIONS */
@@ -250,6 +260,32 @@ p {
     }
 }
 
+/* PULSING VIGNETTE */
+.vignette-pulse #ui-layer::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle, transparent 50%, #000 150%);
+    pointer-events: none;
+    z-index: 50;
+    animation: breathe 5s infinite ease-in-out;
+}
+
+@keyframes breathe {
+
+    0%,
+    100% {
+        background: radial-gradient(circle, transparent 50%, #000 120%);
+    }
+
+    50% {
+        background: radial-gradient(circle, transparent 40%, #000 100%);
+    }
+}
+
 /* MOBILE OPTIMIZATION */
 @media (max-width: 768px) {
     h1 {
@@ -272,38 +308,18 @@ p {
         font-size: 1.2rem;
     }
 
+    .gold-btn {
+        padding: 15px 20px;
+        font-size: 0.9rem;
+    }
+
     .flash-img {
         max-width: 90%;
-        /* Larger images on phone */
+        max-height: 60%;
     }
 
     #worship-hud {
         width: 80%;
         bottom: 30px;
-    }
-}
-
-/* PULSING VIGNETTE */
-.vignette-pulse {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: radial-gradient(circle, transparent 50%, #000 150%);
-    pointer-events: none;
-    z-index: 50;
-    animation: breathe 5s infinite ease-in-out;
-}
-
-@keyframes breathe {
-
-    0%,
-    100% {
-        background: radial-gradient(circle, transparent 50%, #000 120%);
-    }
-
-    50% {
-        background: radial-gradient(circle, transparent 40%, #000 100%);
     }
 }
