@@ -221,3 +221,89 @@ p {
     opacity: 0;
     transition: transform 6s ease-out, opacity 1s ease-in-out;
 }
+
+/* PARTICLES */
+.particle {
+    position: absolute;
+    width: 2px;
+    height: 2px;
+    background: #fff;
+    opacity: 0.5;
+    pointer-events: none;
+    box-shadow: 0 0 5px #fff;
+    animation: rise 10s linear infinite;
+}
+
+@keyframes rise {
+    0% {
+        transform: translateY(100vh) scale(0);
+        opacity: 0;
+    }
+
+    50% {
+        opacity: 0.5;
+    }
+
+    100% {
+        transform: translateY(-10vh) scale(1);
+        opacity: 0;
+    }
+}
+
+/* MOBILE OPTIMIZATION */
+@media (max-width: 768px) {
+    h1 {
+        font-size: 1.5rem;
+        /* Smaller title */
+        letter-spacing: 5px;
+    }
+
+    #enter-btn {
+        padding: 15px 30px;
+        font-size: 0.9rem;
+    }
+
+    .glass-box {
+        padding: 20px;
+        width: 95%;
+    }
+
+    .glass-box h2 {
+        font-size: 1.2rem;
+    }
+
+    .flash-img {
+        max-width: 90%;
+        /* Larger images on phone */
+    }
+
+    #worship-hud {
+        width: 80%;
+        bottom: 30px;
+    }
+}
+
+/* PULSING VIGNETTE */
+.vignette-pulse {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle, transparent 50%, #000 150%);
+    pointer-events: none;
+    z-index: 50;
+    animation: breathe 5s infinite ease-in-out;
+}
+
+@keyframes breathe {
+
+    0%,
+    100% {
+        background: radial-gradient(circle, transparent 50%, #000 120%);
+    }
+
+    50% {
+        background: radial-gradient(circle, transparent 40%, #000 100%);
+    }
+}
