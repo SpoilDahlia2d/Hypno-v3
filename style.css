@@ -281,9 +281,58 @@ p {
         background: radial-gradient(circle, transparent 50%, #000 120%);
     }
 
-    50% {
-        background: radial-gradient(circle, transparent 40%, #000 100%);
-    }
+    color: #000;
+    border: none;
+    padding: 10px 30px;
+    font-family: 'Cinzel',
+    serif;
+    font-weight: bold;
+    cursor: pointer;
+    letter-spacing: 2px;
+}
+
+#unlock-btn:hover {
+    background: #d4af37;
+}
+
+#error-msg {
+    color: #ff3333;
+    font-weight: bold;
+    margin-top: 10px;
+    text-shadow: 0 0 10px #ff0000;
+}
+
+/* CLICK COUNTER */
+#click-counter {
+    margin-top: 5px;
+    font-size: 0.6rem;
+    color: #d4af37;
+    letter-spacing: 2px;
+}
+
+.close-btn {
+    background: transparent;
+    border: 1px solid #555;
+    color: #aaa;
+    margin-top: 10px;
+    padding: 10px;
+    font-size: 0.8rem;
+    cursor: pointer;
+}
+
+/* REWARD MODAL Z-INDEX */
+#reward-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.9);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 400;
+    /* Higher than paywall */
 }
 
 /* MOBILE OPTIMIZATION */
